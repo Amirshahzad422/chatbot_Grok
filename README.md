@@ -47,4 +47,4 @@ If you encounter issues:
 1. Check your internet connection
 2. Verify the API key is correct
 3. Open browser developer tools (F12) to check for any JavaScript errors
-4. Ensure CORS is not blocking the API requests 
+4. Ensure CORS is not blocking the API requests # chatbot_Grok
