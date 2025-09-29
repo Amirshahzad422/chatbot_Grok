@@ -13,11 +13,114 @@ document.addEventListener('DOMContentLoaded', () => {
     fileInput.accept = 'image/*,.pdf,.doc,.docx,.txt';
     document.body.appendChild(fileInput);
     
-    // Your Groq API key
-    const apiKey = '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';
+    // Removed hardcoded API key; frontend will call backend proxy
     
     // Keep track of conversation history
     let conversationHistory = [];
+
+    // Helpers to format model content
+    function escapeHtml(s) {
+        return s
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function stripThinking(s) {
+        // Remove <think>...</think> sections completely
+        return s.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    }
+
+    function renderMarkdown(raw) {
+        const text = escapeHtml(stripThinking(raw));
+        let html = text;
+        // Horizontal rules --- or ***
+        html = html.replace(/^(?:-{3,}|\*{3,})$/gm, '<hr>');
+        // Headings #, ##, ### (basic)
+        html = html.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>');
+        html = html.replace(/^##\s+(.+)$/gm, '<h2>$1</h2>');
+        html = html.replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
+        // Blockquotes
+        html = html.replace(/^>\s?(.+)$/gm, '<blockquote>$1</blockquote>');
+        // Code blocks ```
+        html = html.replace(/```([\s\S]*?)```/g, (_, code) => {
+            const body = code.replace(/\n$/,'');
+            return '<pre><code>' + body + '</code></pre>';
+        });
+        // Inline code `code`
+        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+        // Bold **text**
+        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        // Italic *text*
+        html = html.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>');
+        // Links [text](url)
+        html = html.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        // Lists: lines starting with - or *
+        if (/^(\s*[-*] .+)(\n\s*[-*] .+)+/m.test(html)) {
+            html = html.replace(/(?:^|\n)([-*] .+(?:\n[-*] .+)*)/g, (m) => {
+                const items = m.split(/\n/).map(line => line.replace(/^[-*]\s+/, '')).filter(Boolean);
+                return '<ul>' + items.map(i => '<li>' + i + '</li>').join('') + '</ul>';
+            });
+        }
+        // Paragraph / line breaks
+        html = html.replace(/\n\n+/g, '</p><p>');
+        html = '<p>' + html.replace(/\n/g, '<br>') + '</p>';
+        return html;
+    }
+
+    function addCopyToCodeBlocks(container) {
+        const blocks = container.querySelectorAll('pre');
+        blocks.forEach((pre) => {
+            if (pre.querySelector('.code-copy')) return;
+            const btn = document.createElement('button');
+            btn.className = 'code-copy';
+            btn.title = 'Copy code';
+            btn.innerHTML = '<i class="fas fa-copy"></i>';
+            btn.addEventListener('click', async () => {
+                const text = pre.innerText;
+                try {
+                    await navigator.clipboard.writeText(text);
+                    btn.classList.add('tool-success');
+                    setTimeout(() => btn.classList.remove('tool-success'), 800);
+                } catch {}
+            });
+            pre.style.position = 'relative';
+            pre.appendChild(btn);
+        });
+    }
+
+    function createBotToolbar(messageContentEl, plainText) {
+        const tools = document.createElement('div');
+        tools.className = 'message-tools';
+
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'tool-btn';
+        copyBtn.title = 'Copy';
+        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(plainText);
+                copyBtn.classList.add('tool-success');
+                setTimeout(() => copyBtn.classList.remove('tool-success'), 800);
+            } catch {}
+        });
+
+        const expandBtn = document.createElement('button');
+        expandBtn.type = 'button';
+        expandBtn.className = 'tool-btn';
+        expandBtn.title = 'Toggle collapse';
+        expandBtn.innerHTML = '<i class="fas fa-arrows-up-down"></i>';
+        expandBtn.addEventListener('click', () => {
+            messageContentEl.classList.toggle('collapsed');
+        });
+
+        tools.appendChild(copyBtn);
+        tools.appendChild(expandBtn);
+        return tools;
+    }
     
     // Auto-resize textarea as user types
     userInput.addEventListener('input', function() {
@@ -80,7 +183,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             // Regular text message
-            messageContent.textContent = content;
+            if (isUser) {
+                messageContent.textContent = content;
+            } else {
+                messageContent.innerHTML = renderMarkdown(content);
+                addCopyToCodeBlocks(messageContent);
+                // Default: show full content (no auto-collapse)
+                // Toolbar for manual toggle if user wants
+                const plain = stripThinking(content);
+                const tools = createBotToolbar(messageContent, plain);
+                messageDiv.appendChild(tools);
+            }
         }
         
         if (!isUser) {
@@ -101,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isFile) {
             conversationHistory.push({
                 role: isUser ? "user" : "assistant",
-                content: content
+                content: isUser ? content : stripThinking(content)
             });
         } else {
             // For files, just add a text description to the conversation
@@ -139,35 +252,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Function to send message to Groq API
+    // Function to send message via backend proxy
     async function sendToGroq(userMessage) {
         try {
             showTypingIndicator();
             
-            // Groq API endpoint
-            const endpoint = 'https://api.groq.com/openai/v1/chat/completions';
-            
-            const response = await fetch(endpoint, {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'llama3-70b-8192',  // Using Llama 3 70B model
+                    model: 'deepseek-r1-distill-llama-70b',
                     messages: conversationHistory,
                     temperature: 0.7,
                     max_tokens: 800
                 })
             });
             
+            const maybeJson = await response.json().catch(() => null);
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`API Error: ${errorData.error?.message || response.statusText}`);
+                const errMsg = maybeJson?.error?.message || maybeJson?.error || response.statusText;
+                throw new Error(errMsg);
             }
             
-            const data = await response.json();
-            const botReply = data.choices[0].message.content;
+            const data = maybeJson || {};
+            const botReply = data.choices?.[0]?.message?.content || '[No content]';
             
             removeTypingIndicator();
             addMessage(botReply);
