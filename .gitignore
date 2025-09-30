@@ -1,0 +1,10 @@
+# Logs
+server.log
+*.log
+
+# OS
+.DS_Store
+
+# Node
+node_modules/
+.npm/ 
