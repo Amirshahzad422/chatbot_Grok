@@ -1,7 +1,7 @@
 {
-  "name": "grok-chatbot",
+  "name": "openai-chatbot",
   "version": "1.0.0",
-  "description": "A simple web-based chatbot using the Grok API",
+  "description": "A simple web-based chatbot using the OpenAI API",
   "main": "server.js",
   "scripts": {
     "start": "PORT=3001 node server.js",
@@ -9,7 +9,7 @@
     "build": "echo 'Build completed successfully! No build step required for this project.'"
   },
   "keywords": [
-    "grok",
+    "openai",
     "chatbot",
     "ai",
     "api"

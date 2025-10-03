@@ -1,10 +1,10 @@
-# Grok Chatbot
+# OpenAI Chatbot
 
-A modern web-based chatbot using the Groq API with a beautiful, responsive interface.
+A modern web-based chatbot using the OpenAI API with a beautiful, responsive interface.
 
 ## Features
 
-- 🤖 **AI Chat Interface** - Powered by Groq's deepseek-r1-distill-llama-70b model
+- 🤖 **AI Chat Interface** - Powered by OpenAI models (default: gpt-4o-mini)
 - 📁 **File Upload Support** - Upload images, PDFs, and other documents
 - 🎨 **Modern UI** - Dark theme with responsive design
 - 📝 **Markdown Support** - Rich text formatting in responses
@@ -19,8 +19,8 @@ A modern web-based chatbot using the Groq API with a beautiful, responsive inter
    ```
 
 2. **Set up your API key:**
-   - Get your API key from [Groq Console](https://console.groq.com/keys)
-   - Edit the `.env` file and replace `gsk_your_actual_api_key_here` with your actual API key
+   - Get your API key from the [OpenAI Platform](https://platform.openai.com/)
+   - Edit the `.env` file and add `OPENAI_API_KEY=sk_your_actual_api_key_here`
 
 3. **Start the server:**
    ```bash
@@ -32,15 +32,15 @@ A modern web-based chatbot using the Groq API with a beautiful, responsive inter
 
 ## API Key Setup
 
-1. Visit [Groq Console](https://console.groq.com/keys)
+1. Visit the [OpenAI Platform](https://platform.openai.com/)
 2. Create a new API key
-3. Copy the key (starts with `gsk_`)
+3. Copy the key (starts with `sk-`)
 4. Open the `.env` file in your project
-5. Replace `gsk_your_actual_api_key_here` with your actual key
+5. Set `OPENAI_API_KEY` to your key
 
 Example `.env` file:
 ```
-GROQ_API_KEY=gsk_1234567890abcdef...
+OPENAI_API_KEY=sk_1234567890abcdef...
 PORT=3001
 ```
 
@@ -71,8 +71,8 @@ If you get a "port already in use" error:
 
 ### API Key Issues
 - Make sure your API key is correctly set in the `.env` file
-- Ensure the key starts with `gsk_`
-- Check that you have sufficient credits in your Groq account
+- Ensure the key starts with `sk-`
+- Check that you have sufficient credits/limits in your OpenAI account
 
 ### File Upload Issues
 - Supported formats: images (JPG, PNG, GIF, etc.), PDFs, documents
