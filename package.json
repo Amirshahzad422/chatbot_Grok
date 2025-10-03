@@ -4,8 +4,9 @@
   "description": "A simple web-based chatbot using the Grok API",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "PORT=3001 node server.js",
+    "dev": "PORT=3001 node server.js",
+    "build": "echo 'Build completed successfully! No build step required for this project.'"
   },
   "keywords": [
     "grok",
@@ -19,4 +20,4 @@
   "engines": {
     "node": ">=14.0.0"
   }
-} 
+}

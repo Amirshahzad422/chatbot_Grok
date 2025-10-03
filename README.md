@@ -1,50 +1,83 @@
 # Grok Chatbot
 
-A simple web-based chatbot interface that uses the Grok API to generate responses.
+A modern web-based chatbot using the Groq API with a beautiful, responsive interface.
 
 ## Features
 
-- Clean, modern UI
-- Real-time chat interaction
-- Typing indicators
-- Support for Enter key to send messages
-- Conversation history maintained during session
+- 🤖 **AI Chat Interface** - Powered by Groq's deepseek-r1-distill-llama-70b model
+- 📁 **File Upload Support** - Upload images, PDFs, and other documents
+- 🎨 **Modern UI** - Dark theme with responsive design
+- 📝 **Markdown Support** - Rich text formatting in responses
+- 📋 **Code Copy** - One-click copy for code blocks
+- 🔧 **Message Tools** - Copy and expand/collapse long messages
 
-## How to Use
+## Quick Start
 
-1. Open `index.html` in a web browser
-2. Type your message in the input field
-3. Press Enter or click the Send button
-4. Wait for Grok to respond
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-## Technical Details
+2. **Set up your API key:**
+   - Get your API key from [Groq Console](https://console.groq.com/keys)
+   - Edit the `.env` file and replace `gsk_your_actual_api_key_here` with your actual API key
 
-This chatbot uses:
-- HTML5 for structure
-- CSS3 for styling
-- JavaScript (ES6+) for functionality
-- Fetch API for making requests to the Grok API
-- Grok's API via Groq's API endpoint
+3. **Start the server:**
+   ```bash
+   npm start
+   ```
 
-## API Key Security
+4. **Open your browser:**
+   Navigate to `http://localhost:3001`
 
-**Important**: The API key is currently stored directly in the JavaScript file. For production use, consider:
-- Using environment variables
-- Implementing a backend service to handle API requests
-- Using a proxy server to hide your API key
+## API Key Setup
 
-## Browser Compatibility
+1. Visit [Groq Console](https://console.groq.com/keys)
+2. Create a new API key
+3. Copy the key (starts with `gsk_`)
+4. Open the `.env` file in your project
+5. Replace `gsk_your_actual_api_key_here` with your actual key
 
-Works on all modern browsers:
-- Chrome
-- Firefox
-- Safari
-- Edge
+Example `.env` file:
+```
+GROQ_API_KEY=gsk_1234567890abcdef...
+PORT=3001
+```
+
+## Available Scripts
+
+- `npm start` - Start the server on port 3001
+- `npm run dev` - Start the server in development mode
+- `npm run build` - Build the project (no build step required)
+
+## Project Structure
+
+```
+├── index.html          # Main HTML file
+├── styles.css          # CSS styling
+├── script.js           # Frontend JavaScript
+├── server.js           # Node.js server
+├── package.json        # Project configuration
+├── .env               # Environment variables
+└── README.md          # This file
+```
 
 ## Troubleshooting
 
-If you encounter issues:
-1. Check your internet connection
-2. Verify the API key is correct
-3. Open browser developer tools (F12) to check for any JavaScript errors
-4. Ensure CORS is not blocking the API requests # chatbot_Grok
+### Port Already in Use
+If you get a "port already in use" error:
+- The server is configured to use port 3001 by default
+- You can change the port in the `.env` file
+
+### API Key Issues
+- Make sure your API key is correctly set in the `.env` file
+- Ensure the key starts with `gsk_`
+- Check that you have sufficient credits in your Groq account
+
+### File Upload Issues
+- Supported formats: images (JPG, PNG, GIF, etc.), PDFs, documents
+- Maximum file size: 1GB (limited by browser)
+
+## License
+
+MIT License - feel free to use this project for your own purposes!

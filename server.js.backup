@@ -7,7 +7,7 @@ try {
   const envFile = fs.readFileSync('.env', 'utf8');
   envFile.split('\n').forEach(line => {
     const [key, value] = line.split('=');
-    if (key && value && !key.startsWith('#')) {
+    if (key && value) {
       process.env[key.trim()] = value.trim();
     }
   });
@@ -40,14 +40,10 @@ const server = http.createServer(async (req, res) => {
   // API proxy for Groq
   if (req.method === 'POST' && req.url === '/api/chat') {
     try {
-      if (!process.env.GROQ_API_KEY || 
-          process.env.GROQ_API_KEY === 'gsk_your_actual_api_key_here' ||
-          process.env.GROQ_API_KEY === 'your_actual_groq_api_key_here' ||
-          !process.env.GROQ_API_KEY.startsWith('gsk_')) {
+      if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === 'gsk_your_actual_api_key_here') {
         sendJson(res, 500, { 
           error: 'API key not configured. Please set GROQ_API_KEY in .env file or environment variables.',
-          instructions: 'Get your API key from https://console.groq.com/keys and replace "your_actual_groq_api_key_here" in the .env file',
-          current_key: process.env.GROQ_API_KEY ? 'Set but invalid format' : 'Not set'
+          instructions: 'Get your API key from https://console.groq.com/keys and add it to the .env file'
         });
         return;
       }
@@ -126,40 +122,9 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-// Start server with better error handling
-server.listen(PORT, (err) => {
-  if (err) {
-    if (err.code === 'EADDRINUSE') {
-      console.log(`❌ Port ${PORT} is already in use!`);
-      console.log(`💡 Try running: lsof -ti:${PORT} | xargs kill`);
-      console.log(`🔄 Or use a different port with: PORT=3002 node server.js`);
-      process.exit(1);
-    } else {
-      console.log(`❌ Error starting server: ${err.message}`);
-      process.exit(1);
-    }
-  } else {
-    console.log(`🚀 Grok Chatbot Server running at http://localhost:${PORT}/`);
-    console.log(`📝 To enable AI features, set your GROQ_API_KEY in the .env file`);
-    console.log(`🔑 Get your API key from: https://console.groq.com/keys`);
-    console.log(`💡 Replace "your_actual_groq_api_key_here" in '.env' with your actual API key`);
-    console.log(`Press Ctrl+C to stop the server`);
-  }
-});
-
-// Graceful shutdown
-process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down server gracefully...');
-  server.close(() => {
-    console.log('✅ Server closed successfully');
-    process.exit(0);
-  });
-});
-
-process.on('SIGTERM', () => {
-  console.log('\n🛑 Shutting down server gracefully...');
-  server.close(() => {
-    console.log('✅ Server closed successfully');
-    process.exit(0);
-  });
+server.listen(PORT, () => {
+  console.log(`🚀 Grok Chatbot Server running at http://localhost:${PORT}/`);
+  console.log(`📝 To enable AI features, set your GROQ_API_KEY in the .env file`);
+  console.log(`🔑 Get your API key from: https://console.groq.com/keys`);
+  console.log(`Press Ctrl+C to stop the server`);
 });
