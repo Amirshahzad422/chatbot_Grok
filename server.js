@@ -37,18 +37,12 @@ function sendJson(res, status, data) {
 const server = http.createServer(async (req, res) => {
   console.log(`${req.method} ${req.url}`);
 
-  // API proxy for Groq
+  // API proxy for OpenAI-compatible endpoint
   if (req.method === 'POST' && req.url === '/api/chat') {
     try {
-      if (!process.env.GROQ_API_KEY || 
-          process.env.GROQ_API_KEY === 'gsk_your_actual_api_key_here' ||
-          process.env.GROQ_API_KEY === 'your_actual_groq_api_key_here' ||
-          !process.env.GROQ_API_KEY.startsWith('gsk_')) {
-        sendJson(res, 500, { 
-          error: 'API key not configured. Please set GROQ_API_KEY in .env file or environment variables.',
-          instructions: 'Get your API key from https://console.groq.com/keys and replace "your_actual_groq_api_key_here" in the .env file',
-          current_key: process.env.GROQ_API_KEY ? 'Set but invalid format' : 'Not set'
-        });
+      const openaiKey = process.env.OPENAI_API_KEY;
+      if (!openaiKey) {
+        sendJson(res, 500, { error: 'API key not configured. Please set OPENAI_API_KEY in .env or environment variables.' });
         return;
       }
 
@@ -57,18 +51,18 @@ const server = http.createServer(async (req, res) => {
       req.on('end', async () => {
         try {
           const parsed = body ? JSON.parse(body) : {};
-          const { messages, model = 'deepseek-r1-distill-llama-70b', temperature = 0.7, max_tokens = 800 } = parsed;
+          const { messages, model = 'gpt-4o-mini', temperature = 0.7, max_tokens = 800 } = parsed;
 
           if (!Array.isArray(messages)) {
             sendJson(res, 400, { error: 'Invalid request: messages must be an array' });
             return;
           }
 
-          const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          const aiRes = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+              'Authorization': `Bearer ${openaiKey}`
             },
             body: JSON.stringify({
               model,
@@ -78,14 +72,14 @@ const server = http.createServer(async (req, res) => {
             })
           });
 
-          const groqText = await groqRes.text();
+          const groqText = await aiRes.text();
           // Try to forward JSON body; if not JSON, wrap it
           try {
             const groqJson = JSON.parse(groqText);
-            res.writeHead(groqRes.status, { 'Content-Type': 'application/json' });
+            res.writeHead(aiRes.status, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(groqJson));
           } catch {
-            sendJson(res, groqRes.status, { raw: groqText });
+            sendJson(res, aiRes.status, { raw: groqText });
           }
         } catch (e) {
           sendJson(res, 400, { error: 'Invalid JSON body', detail: String(e.message || e) });
@@ -139,10 +133,9 @@ server.listen(PORT, (err) => {
       process.exit(1);
     }
   } else {
-    console.log(`🚀 Grok Chatbot Server running at http://localhost:${PORT}/`);
-    console.log(`📝 To enable AI features, set your GROQ_API_KEY in the .env file`);
-    console.log(`🔑 Get your API key from: https://console.groq.com/keys`);
-    console.log(`💡 Replace "your_actual_groq_api_key_here" in '.env' with your actual API key`);
+    console.log(`🚀 Chatbot Server running at http://localhost:${PORT}/`);
+    console.log(`📝 To enable AI features, set your OPENAI_API_KEY in the .env file`);
+    console.log(`🔑 Docs: https://platform.openai.com/`);
     console.log(`Press Ctrl+C to stop the server`);
   }
 });

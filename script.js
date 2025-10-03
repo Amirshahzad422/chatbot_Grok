@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const deleteButton = document.getElementById('delete-button');
     const attachButton = document.getElementById('attach-button');
     const suggestionCards = document.querySelectorAll('.card');
+    const suggestionContainer = document.querySelector('.suggestion-cards');
+    const headerContainer = document.querySelector('.chat-header');
     
     // Create a hidden file input element
     const fileInput = document.createElement('input');
@@ -26,6 +28,17 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
+    }
+
+    // Toggle greeting/suggestions visibility based on whether conversation exists
+    function updateIntroVisibility() {
+        const hasConversation = conversationHistory.length > 0;
+        if (suggestionContainer) {
+            suggestionContainer.style.display = hasConversation ? 'none' : '';
+        }
+        if (headerContainer) {
+            headerContainer.style.display = hasConversation ? 'none' : '';
+        }
     }
 
     function stripThinking(s) {
@@ -223,6 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 content: `[Shared a file: ${fileData.name}]`
             });
         }
+
+        // Hide intro after first message is added
+        updateIntroVisibility();
     }
     
     // Function to show typing indicator
@@ -263,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'deepseek-r1-distill-llama-70b',
+                    model: 'gpt-4o-mini',
                     messages: conversationHistory,
                     temperature: 0.7,
                     max_tokens: 800
@@ -296,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Reset conversation history
         conversationHistory = [];
+        updateIntroVisibility();
     }
     
     // Function to handle file selection
@@ -387,4 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Event listener for file input change
     fileInput.addEventListener('change', handleFileSelect);
+
+    // Initialize intro visibility on load
+    updateIntroVisibility();
 }); 

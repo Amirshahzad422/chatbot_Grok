@@ -8,3 +8,26 @@ server.log
 # Node
 node_modules/
 .npm/ 
+.env
+*.env.local
+.env.*.local
+
+# Logs and runtime
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Coverage / build artifacts
+coverage/
+dist/
+build/
+
+# Mac
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
