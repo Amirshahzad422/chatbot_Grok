@@ -6,8 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "PORT=3001 node server.js",
-    "build": "echo 'Build completed successfully! No build step required for this project.'",
-    "vercel-build": "echo 'Vercel build completed successfully!'"
+    "build": "echo 'Build completed successfully! Static files ready in public/ directory.'",
+    "vercel-build": "echo 'Vercel build completed successfully!'",
+    "netlify-build": "echo 'Netlify build completed successfully!'"
   },
   "keywords": [
     "openai",
