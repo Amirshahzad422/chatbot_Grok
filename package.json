@@ -1,0 +1,23 @@
+{
+  "name": "openai-chatbot",
+  "version": "1.0.0",
+  "description": "A simple web-based chatbot using the OpenAI API",
+  "main": "server.js",
+  "scripts": {
+    "start": "PORT=3001 node server.js",
+    "dev": "PORT=3001 node server.js",
+    "build": "echo 'Build completed successfully! No build step required for this project.'"
+  },
+  "keywords": [
+    "openai",
+    "chatbot",
+    "ai",
+    "api"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

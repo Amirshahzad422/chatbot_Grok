@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-content">
+                <h1>Hello, there</h1>
+                <p>How can I help you?</p>
+            </div>
+            <button id="settings-button" class="settings-btn"><i class="fas fa-cog"></i></button>
+        </div>
+        
+        <div id="settings-panel" class="settings-panel hidden">
+            <div class="settings-content">
+                <h3>Settings</h3>
+                <div class="setting-group">
+                    <label for="provider-select">Provider:</label>
+                    <select id="provider-select">
+                        <option value="auto">Auto</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="groq">Groq</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label for="model-select">Model:</label>
+                    <select id="model-select">
+                        <optgroup label="OpenAI Models">
+                            <option value="gpt-4">GPT-4</option>
+                            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                            <option value="gpt-3.5-turbo" selected>GPT-3.5 Turbo</option>
+                            <option value="o1-preview">O1 Preview</option>
+                            <option value="o1-mini">O1 Mini</option>
+                        </optgroup>
+                        <optgroup label="Groq Models">
+                            <option value="deepseek-r1-distill-llama-70b">DeepSeek R1 Distill Llama 70B</option>
+                            <option value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</option>
+                            <option value="llama-3.1-70b-versatile">Llama 3.1 70B Versatile</option>
+                            <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <button id="close-settings" class="close-settings-btn">Close</button>
+            </div>
+        </div>
+        <div class="suggestion-cards">
+            <div class="card">
+                <div class="card-content">
+                    <p>Design a home office setup for remote work under $500.</p>
+                </div>
+                <div class="card-icon blue">
+                    <i class="fas fa-pencil"></i>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-content">
+                    <p>How can I level up my web development expertise in 2025</p>
+                </div>
+                <div class="card-icon green">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-content">
+                    <p>Suggest some useful tools for debugging JavaScript code.</p>
+                </div>
+                <div class="card-icon gold">
+                    <i class="fas fa-code"></i>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-content">
+                    <p>Create a React JS component for simple todo list app.</p>
+                </div>
+                <div class="card-icon purple">
+                    <i class="fas fa-tasks"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be added here dynamically -->
+        </div>
+        
+        <div class="chat-input-container">
+            <textarea id="user-input" placeholder="Type your message here..." rows="1"></textarea>
+            <div class="input-buttons">
+                <button id="attach-button"><i class="fas fa-paperclip"></i></button>
+                <button id="send-button"><i class="fas fa-arrow-up"></i></button>
+                <button id="delete-button"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
