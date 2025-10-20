@@ -4,9 +4,10 @@
   "description": "A simple web-based chatbot using the OpenAI API",
   "main": "server.js",
   "scripts": {
-    "start": "PORT=3001 node server.js",
+    "start": "node server.js",
     "dev": "PORT=3001 node server.js",
-    "build": "echo 'Build completed successfully! No build step required for this project.'"
+    "build": "echo 'Build completed successfully! No build step required for this project.'",
+    "vercel-build": "echo 'Vercel build completed successfully!'"
   },
   "keywords": [
     "openai",

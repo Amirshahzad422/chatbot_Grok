@@ -183,9 +183,12 @@ npm run dev
 3. Deploy using Git or GitHub integration
 
 #### Vercel
-1. Connect your GitHub repository
-2. Configure environment variables
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables in Vercel dashboard:
+   - `OPENAI_API_KEY` - Your OpenAI API key
+   - `GROQ_API_KEY` - Your Groq API key (optional)
 3. Deploy with automatic builds
+4. The `vercel.json` configuration handles the deployment automatically
 
 #### Railway/Render
 1. Connect repository
